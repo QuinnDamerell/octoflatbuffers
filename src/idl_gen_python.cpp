@@ -55,7 +55,7 @@ class PythonGenerator : public BaseGenerator {
   // this is the prefix code for that.
   std::string OffsetPrefix(const FieldDef &field) {
     return "\n" + Indent + Indent +
-           "o = flatbuffers.number_types.UOffsetTFlags.py_type" +
+           "o = octoflatbuffers.number_types.UOffsetTFlags.py_type" +
            "(self._tab.Offset(" + NumToString(field.value.offset) + "))\n" +
            Indent + Indent + "if o != 0:\n";
   }
@@ -129,8 +129,8 @@ class PythonGenerator : public BaseGenerator {
     code += "(cls, buf, offset=0):";
     code += "\n";
     code += Indent + Indent;
-    code += "n = flatbuffers.encode.Get";
-    code += "(flatbuffers.packer.uoffset, buf, offset)\n";
+    code += "n = octoflatbuffers.encode.Get";
+    code += "(octoflatbuffers.packer.uoffset, buf, offset)\n";
     code += Indent + Indent + "x = " + NormalizedName(struct_def) + "()\n";
     code += Indent + Indent + "x.Init(buf, n + offset)\n";
     code += Indent + Indent + "return x\n";
@@ -151,7 +151,7 @@ class PythonGenerator : public BaseGenerator {
 
     GenReceiver(struct_def, code_ptr);
     code += "Init(self, buf, pos):\n";
-    code += Indent + Indent + "self._tab = flatbuffers.table.Table(buf, pos)\n";
+    code += Indent + Indent + "self._tab = octoflatbuffers.table.Table(buf, pos)\n";
     code += "\n";
   }
 
@@ -176,7 +176,7 @@ class PythonGenerator : public BaseGenerator {
     code += MakeCamel(NormalizedName(field)) + "IsNone(self";
     code += "):";
     code += GenIndents(2) +
-            "o = flatbuffers.number_types.UOffsetTFlags.py_type" +
+            "o = octoflatbuffers.number_types.UOffsetTFlags.py_type" +
             "(self._tab.Offset(" + NumToString(field.value.offset) + "))";
     code += GenIndents(2) + "return o == 0";
     code += "\n\n";
@@ -190,7 +190,7 @@ class PythonGenerator : public BaseGenerator {
     GenReceiver(struct_def, code_ptr);
     code += MakeCamel(NormalizedName(field));
     code += "(self): return " + getter;
-    code += "self._tab.Pos + flatbuffers.number_types.UOffsetTFlags.py_type(";
+    code += "self._tab.Pos + octoflatbuffers.number_types.UOffsetTFlags.py_type(";
     code += NumToString(field.value.offset) + "))\n";
   }
 
@@ -247,7 +247,7 @@ class PythonGenerator : public BaseGenerator {
     } else {
       auto getter = GenGetter(vec_type);
       code += "(self): return [" + getter;
-      code += "self._tab.Pos + flatbuffers.number_types.UOffsetTFlags.py_type(";
+      code += "self._tab.Pos +octoflatbuffers.number_types.UOffsetTFlags.py_type(";
       code += NumToString(field.value.offset) + " + i * ";
       code += NumToString(InlineSize(vec_type));
       code += ")) for i in range(";
@@ -303,10 +303,10 @@ class PythonGenerator : public BaseGenerator {
     code += OffsetPrefix(field);
 
     // TODO(rw): this works and is not the good way to it:
-    bool is_native_table = TypeName(field) == "*flatbuffers.Table";
+    bool is_native_table = TypeName(field) == "*octoflatbuffers.Table";
     if (is_native_table) {
       code +=
-          Indent + Indent + Indent + "from flatbuffers.table import Table\n";
+          Indent + Indent + Indent + "from octoflatbuffers.table import Table\n";
     } else if (parser_.opts.include_dependence_headers) {
       code += Indent + Indent + Indent;
       code += "from " + GenPackageReference(field.value.type) + " import " +
@@ -344,7 +344,7 @@ class PythonGenerator : public BaseGenerator {
     code += "(self, j):" + OffsetPrefix(field);
     code += Indent + Indent + Indent + "x = self._tab.Vector(o)\n";
     code += Indent + Indent + Indent;
-    code += "x += flatbuffers.number_types.UOffsetTFlags.py_type(j) * ";
+    code += "x += octoflatbuffers.number_types.UOffsetTFlags.py_type(j) * ";
     code += NumToString(InlineSize(vectortype)) + "\n";
     if (!(vectortype.struct_def->fixed)) {
       code += Indent + Indent + Indent + "x = self._tab.Indirect(x)\n";
@@ -375,7 +375,7 @@ class PythonGenerator : public BaseGenerator {
     code += Indent + Indent + Indent + "a = self._tab.Vector(o)\n";
     code += Indent + Indent + Indent;
     code += "return " + GenGetter(field.value.type);
-    code += "a + flatbuffers.number_types.UOffsetTFlags.py_type(j * ";
+    code += "a + octoflatbuffers.number_types.UOffsetTFlags.py_type(j * ";
     code += NumToString(InlineSize(vectortype)) + "))\n";
     if (IsString(vectortype)) {
       code += Indent + Indent + "return \"\"\n";
@@ -403,9 +403,36 @@ class PythonGenerator : public BaseGenerator {
 
     code += Indent + Indent + Indent;
     code += "return ";
-    code += "self._tab.GetVectorAsNumpy(flatbuffers.number_types.";
+    code += "self._tab.GetVectorAsNumpy(octoflatbuffers.number_types.";
     code += MakeCamel(GenTypeGet(field.value.type));
     code += "Flags, o)\n";
+
+    if (IsString(vectortype)) {
+      code += Indent + Indent + "return \"\"\n";
+    } else {
+      code += Indent + Indent + "return 0\n";
+    }
+    code += "\n";
+  }
+
+  // Quinn change! Give raw access to the byte array.
+  void GetVectorOfNonStructAsByteArray(const StructDef &struct_def,
+                                   const FieldDef &field,
+                                   std::string *code_ptr) {
+    auto &code = *code_ptr;
+    auto vectortype = field.value.type.VectorType();
+
+    // Currently, we only support accessing as array if
+    // the vector type is a scalar.
+    if (!(IsScalar(vectortype.base_type))) { return; }
+
+    GenReceiver(struct_def, code_ptr);
+    code += MakeCamel(NormalizedName(field)) + "AsByteArray(self):";
+    code += OffsetPrefix(field);
+
+    code += Indent + Indent + Indent;
+    code += "return ";
+    code += "self._tab.GetVectorAsByteArray(o)\n";
 
     if (IsString(vectortype)) {
       code += Indent + Indent + "return \"\"\n";
@@ -576,7 +603,7 @@ class PythonGenerator : public BaseGenerator {
     code += GenMethod(field) + "Slot(";
     code += NumToString(offset) + ", ";
     if (!IsScalar(field.value.type.base_type) && (!struct_def.fixed)) {
-      code += "flatbuffers.number_types.UOffsetTFlags.py_type";
+      code += "octoflatbuffers.number_types.UOffsetTFlags.py_type";
       code += "(";
       code += MakeCamel(NormalizedName(field), false) + ")";
     } else {
@@ -721,6 +748,7 @@ class PythonGenerator : public BaseGenerator {
           } else {
             GetMemberOfVectorOfNonStruct(struct_def, field, code_ptr);
             GetVectorOfNonStructAsNumpy(struct_def, field, code_ptr);
+            GetVectorOfNonStructAsByteArray(struct_def, field, code_ptr);
             GetVectorAsNestedFlatbuffer(struct_def, field, code_ptr);
           }
           break;
@@ -783,7 +811,7 @@ class PythonGenerator : public BaseGenerator {
     code += "BufferHasIdentifier(cls, buf, offset, size_prefixed=False):";
     code += "\n";
     code += Indent + Indent;
-    code += "return flatbuffers.util.BufferHasIdentifier(buf, offset, b\"";
+    code += "return octoflatbuffers.util.BufferHasIdentifier(buf, offset, b\"";
     code += escapedID;
     code += "\", size_prefixed=size_prefixed)\n";
     code += "\n";
@@ -1595,7 +1623,7 @@ class PythonGenerator : public BaseGenerator {
 
     code += "\n";
     code += "def " + union_name + "Creator(unionType, table):";
-    code += GenIndents(1) + "from flatbuffers.table import Table";
+    code += GenIndents(1) + "from octoflatbuffers.table import Table";
     code += GenIndents(1) + "if not isinstance(table, Table):";
     code += GenIndents(2) + "return None";
 
@@ -1637,7 +1665,7 @@ class PythonGenerator : public BaseGenerator {
       case BASE_TYPE_UNION: return "self._tab.Union(";
       case BASE_TYPE_VECTOR: return GenGetter(type.VectorType());
       default:
-        return "self._tab.Get(flatbuffers.number_types." +
+        return "self._tab.Get(octoflatbuffers.number_types." +
                MakeCamel(GenTypeGet(type)) + "Flags, ";
     }
   }
@@ -1670,7 +1698,7 @@ class PythonGenerator : public BaseGenerator {
       case BASE_TYPE_STRUCT: return type.struct_def->name;
       case BASE_TYPE_UNION:
         // fall through
-      default: return "*flatbuffers.Table";
+      default: return "*octoflatbuffers.Table";
     }
   }
 
@@ -1738,8 +1766,9 @@ class PythonGenerator : public BaseGenerator {
     code = code + "# " + FlatBuffersGeneratedWarning() + "\n\n";
     code += "# namespace: " + name_space_name + "\n\n";
     if (needs_imports) {
-      code += "import flatbuffers\n";
-      code += "from flatbuffers.compat import import_numpy\n";
+      // Quinn change!
+      code += "import octoflatbuffers\n";
+      code += "from octoflatbuffers.compat import import_numpy\n";
       code += "np = import_numpy()\n\n";
     }
   }

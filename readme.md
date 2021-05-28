@@ -1,58 +1,26 @@
-![logo](http://google.github.io/flatbuffers/fpl_logo_small.png) FlatBuffers
-===========
 
-[![Build Status](https://travis-ci.org/google/flatbuffers.svg?branch=master)](https://travis-ci.org/google/flatbuffers)
-[![Build status](https://ci.appveyor.com/api/projects/status/yg5idd2fnusv1n10?svg=true)](https://ci.appveyor.com/project/gwvo/flatbuffers)
-[![Join the chat at https://gitter.im/google/flatbuffers](https://badges.gitter.im/google/flatbuffers.svg)](https://gitter.im/google/flatbuffers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Discord Chat](https://img.shields.io/discord/656202785926152206.svg)](https:///discord.gg/6qgKs3R)
-[![Twitter Follow](https://img.shields.io/twitter/follow/wvo.svg?style=social)](https://twitter.com/wvo)
+# This is a fork of the flatbuffers project used for OctoEverywhere.
 
+### Why did we fork?
+1) Due to OctoPrint plugin crazyness, where all plugins share the same dependency packages, versioning is hard. Since we needed to make changes to the py code gen anyways, the easiest way to fix the version collision problem was simply to fork and create our own flatbuffer lib.
+2) We made minor changes in the python code gen and lib to not require numpy in order to get byte buffers efficiently.
+3) We made minor changes to the C# code gen and lib to make accessing buffer more efficient with Memory objects.
+4) Having our own repo / branch helps us keep flatbuffer version alignment between our client and server.
 
-**FlatBuffers** is a cross platform serialization library architected for
-maximum memory efficiency. It allows you to directly access serialized data without parsing/unpacking it first, while still having great forwards/backwards compatibility.
+### Changes Made
 
-**Go to our [landing page][] to browse our documentation.**
+1) Renamed things in /python/* to `octoflatbuffers`
+2) Changed the python package files to reflect our fork
+3) Update the flatc python language builder to use the octoflatbuffer package name
+4) Added support for *AsByteArray in flatc
+5) Added GetVectorAsByteArray to the python package.
 
-## Supported operating systems
-* Windows
-* MacOS X
-* Linux
-* Android
-* And any others with a recent C++ compiler.
+### Dev Help
 
-## Supported programming languages
-* C++
-* C#
-* C
-* Dart
-* Go
-* Java
-* JavaScript
-* Lobster
-* Lua
-* PHP
-* Python
-* Rust
-* TypeScript
+Building pip packages:
+https://realpython.com/pypi-publish-python-package/#preparing-your-package-for-publication
 
-*and more in progress...*
+Building flatbuffers:
+https://google.github.io/flatbuffers/flatbuffers_guide_building.html
 
-## Contribution
-* [FlatBuffers Google Group][] to discuss FlatBuffers with other developers and users.
-* [FlatBuffers Issues Tracker][] to submit an issue.
-* [stackoverflow.com][] with [`flatbuffers` tag][] for any questions regarding FlatBuffers.
-
-*To contribute to this project,* see [CONTRIBUTING][].
-
-## Licensing
-*Flatbuffers* is licensed under the Apache License, Version 2.0. See [LICENSE][] for the full license text.
-
-<br>
-
-   [CONTRIBUTING]: http://github.com/google/flatbuffers/blob/master/CONTRIBUTING.md
-   [`flatbuffers` tag]: https://stackoverflow.com/questions/tagged/flatbuffers
-   [FlatBuffers Google Group]: https://groups.google.com/forum/#!forum/flatbuffers
-   [FlatBuffers Issues Tracker]: http://github.com/google/flatbuffers/issues
-   [stackoverflow.com]: http://stackoverflow.com/search?q=flatbuffers
-   [landing page]: https://google.github.io/flatbuffers
-   [LICENSE]: https://github.com/google/flatbuffers/blob/master/LICENSE.txt
+Use `cmake -G "Visual Studio 16" -DCMAKE_BUILD_TYPE=Release` - for vs2019
