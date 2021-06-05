@@ -14,6 +14,7 @@
 3) Update the flatc python language builder to use the octoflatbuffer package name
 4) Added support for *AsByteArray in flatc
 5) Added GetVectorAsByteArray to the python package.
+6) Disabled numpy loading in the py package, since it was causing the plugin to fail loading if not fully installed (by some other plugin) and we don't use it.
 
 ### Dev Help
 
