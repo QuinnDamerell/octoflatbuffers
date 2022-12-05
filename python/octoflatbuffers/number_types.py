@@ -16,9 +16,7 @@ import collections
 import struct
 
 from . import packer
-from .compat import import_numpy, NumpyRequiredForThisFeature
-
-np = import_numpy()
+np = None
 
 # For reference, see:
 # https://docs.python.org/2/library/ctypes.html#ctypes-fundamental-data-types-2

@@ -21,9 +21,8 @@ from . import packer
 from . import compat
 from .compat import range_func
 from .compat import memoryview_type
-from .compat import import_numpy, NumpyRequiredForThisFeature
+np = None
 
-np = import_numpy()
 ## @file
 ## @addtogroup flatbuffers_python_api
 ## @{

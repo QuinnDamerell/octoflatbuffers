@@ -1768,8 +1768,9 @@ class PythonGenerator : public BaseGenerator {
     if (needs_imports) {
       // Quinn change!
       code += "import octoflatbuffers\n";
-      code += "from octoflatbuffers.compat import import_numpy\n";
-      code += "np = import_numpy()\n\n";
+      // Never import the numpy helper, becuase even this fails with some PY setups.
+      //code += "from octoflatbuffers.compat import import_numpy\n";
+      //code += "np = import_numpy()\n\n";
     }
   }
 
