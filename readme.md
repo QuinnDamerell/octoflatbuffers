@@ -1,5 +1,5 @@
 
-# This is a fork of the flatbuffers project used for OctoEverywhere.
+# This is a fork of the flatbuffers project used for [OctoEverywhere](https://octoeverywhere.com) and [Homeway](https://homeway.io).
 
 ### Why did we fork?
 1) Due to OctoPrint plugin crazyness, where all plugins share the same dependency packages, versioning is hard. Since we needed to make changes to the py code gen anyways, the easiest way to fix the version collision problem was simply to fork and create our own flatbuffer lib.
@@ -23,7 +23,7 @@ Building pip packages:
     - ref
         - https://realpython.com/pypi-publish-python-package/#preparing-your-package-for-publication
     - `python -m pip install build twine`
-    - `cd octoflatbuffers\python`
+    - `cd <repo root>\python`
     - Update any refs to the old version (search the old version in all files and update)
     - Ensure the `.\dist` folder contains nothing.
     - `python -m build`
