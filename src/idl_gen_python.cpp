@@ -2128,8 +2128,9 @@ class PythonGenerator : public BaseGenerator {
       const std::string local_import = "." + mod;
 
       // Quinn change!
-      code += "import octoflatbuffers\n";
-      code += "from octoflatbuffers.compat import import_numpy\n";
+      // Never import the numpy helper, because even this fails with some PY setups.
+      //code += "import octoflatbuffers\n";
+      //code += "from octoflatbuffers.compat import import_numpy\n";
       if (parser_.opts.python_typing) {
         code += "from typing import Any\n";
 

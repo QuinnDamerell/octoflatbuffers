@@ -3,8 +3,7 @@
 # namespace: models
 
 import flatbuffers
-from flatbuffers.compat import import_numpy
-np = import_numpy()
+np = None
 
 class HelloRequest(object):
     __slots__ = ['_tab']

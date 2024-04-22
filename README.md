@@ -15,14 +15,29 @@
 4) Added support for *AsByteArray in flatc
 5) Added GetVectorAsByteArray to the python package.
 6) Disabled numpy loading in the py package, since it was causing the plugin to fail loading if not fully installed (by some other plugin) and we don't use it.
+7) Removed all refs to "octoflatbuffers.compat.import_numpy()" since that failed to resolve on some PY setups. (unclear 100% why this was happening)
 
 ### Dev Help
 
 Building pip packages:
-https://realpython.com/pypi-publish-python-package/#preparing-your-package-for-publication
+    - ref
+        - https://realpython.com/pypi-publish-python-package/#preparing-your-package-for-publication
+    - `python -m pip install build twine`
+    - `cd octoflatbuffers\python`
+    - Update any refs to the old version (search the old version in all files and update)
+    - Ensure the `.\dist` folder contains nothing.
+    - `python -m build`
+    - Copy the output .whl file to .zip and you can look at what was packaged.
+    - `twine upload dist/*`
 
 Building flatbuffers:
 https://google.github.io/flatbuffers/flatbuffers_guide_building.html
 
-Use `cmake -G "Visual Studio 16" -DCMAKE_BUILD_TYPE=Release` - for vs2019
-No newline at end of file
+Building/Updating the cflat compiler
+- Build cmake `cmake -G "Visual Studio 17" -DCMAKE_BUILD_TYPE=Release`
+    - If this fails "because it can't find VS22, make sure the C++ Desktop Workload" is installed in the VS installer.
+- Open FlatBuffers.sln file in the root
+- Build flatc in release
+    - flatbuffers\Release\flatc.exe
+- Copy into the OctoEverywhere-Protocol repo.
+

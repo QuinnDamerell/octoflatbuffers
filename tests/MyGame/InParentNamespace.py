@@ -3,8 +3,7 @@
 # namespace: MyGame
 
 import flatbuffers
-from flatbuffers.compat import import_numpy
-np = import_numpy()
+np = None
 
 class InParentNamespace(object):
     __slots__ = ['_tab']

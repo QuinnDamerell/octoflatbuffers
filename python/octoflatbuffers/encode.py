@@ -15,9 +15,9 @@
 from . import number_types as N
 from . import packer
 from .compat import memoryview_type
-from .compat import import_numpy, NumpyRequiredForThisFeature
-
-np = import_numpy()
+#from .compat import import_numpy, NumpyRequiredForThisFeature
+#np = import_numpy()
+np = None
 
 FILE_IDENTIFIER_LENGTH=4
 
