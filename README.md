@@ -40,4 +40,5 @@ Building/Updating the cflat compiler
 - Build flatc in release
     - flatbuffers\Release\flatc.exe
 - Copy into the OctoEverywhere-Protocol repo.
+- If the cflat exe was updated and the flatbuffer version was updated, we must also update the checked in c# flatbuffers lib in the OctoEverywhere and Homeway service logic.
 

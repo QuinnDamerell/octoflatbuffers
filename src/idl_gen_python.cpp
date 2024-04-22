@@ -561,8 +561,8 @@ class PythonGenerator : public BaseGenerator {
 
    // Quinn change! Give raw access to the byte array.
   void GetVectorOfNonStructAsByteArray(const StructDef &struct_def,
-                                   const FieldDef &field,
-                                   std::string *code_ptr) {
+                                       const FieldDef &field,
+                                       std::string *code_ptr) const {
     auto &code = *code_ptr;
     auto vectortype = field.value.type.VectorType();
 
@@ -571,7 +571,7 @@ class PythonGenerator : public BaseGenerator {
     if (!(IsScalar(vectortype.base_type))) { return; }
 
     GenReceiver(struct_def, code_ptr);
-    code += MakeCamel(NormalizedName(field)) + "AsByteArray(self):";
+    code += namer_.Method(field) + "AsByteArray(self):";
     code += OffsetPrefix(field);
 
     code += Indent + Indent + Indent;
@@ -2129,7 +2129,7 @@ class PythonGenerator : public BaseGenerator {
 
       // Quinn change!
       // Never import the numpy helper, because even this fails with some PY setups.
-      //code += "import octoflatbuffers\n";
+      code += "import octoflatbuffers\n";
       //code += "from octoflatbuffers.compat import import_numpy\n";
       if (parser_.opts.python_typing) {
         code += "from typing import Any\n";
@@ -2146,7 +2146,8 @@ class PythonGenerator : public BaseGenerator {
           }
         }
       }
-      code += "np = import_numpy()\n\n";
+      // Quinn change!
+      //code += "np = import_numpy()\n\n";
     }
   }
 

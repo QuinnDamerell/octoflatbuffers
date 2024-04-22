@@ -1153,7 +1153,7 @@ class CSharpGenerator : public BaseGenerator {
         // Quinn Added! - This gives us access to the raw memory with no copies.
         code += "  public Memory<" + GenTypeBasic(field.value.type.VectorType()) +
                 "> Get";
-        code += MakeCamel(field.name, true);
+        code += Name(field);
         code += "Memory() { return ";
         code += "__p.__vector_as_memory(";
         code += NumToString(field.value.offset);
