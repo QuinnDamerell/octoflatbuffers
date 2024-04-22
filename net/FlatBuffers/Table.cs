@@ -112,6 +112,26 @@ namespace Google.FlatBuffers
             var len = this.__vector_len(o);
             return MemoryMarshal.Cast<byte, T>(bb.ToSpan(pos, len * elementSize));
         }
+
+        // Quinn Added!
+        public Memory<byte> __vector_as_memory(int offset, int elementSize)
+        {
+            if (!BitConverter.IsLittleEndian)
+            {
+                throw new NotSupportedException("Getting typed span on a Big Endian " +
+                                                "system is not support");
+            }
+            
+            var o = this.__offset(offset);
+            if (0 == o)
+            {
+                return new Memory<byte>();
+            }
+
+            var pos = this.__vector(o);
+            var len = this.__vector_len(o);
+            return bb.ToMemory(pos, len * elementSize);
+        }
 #else
         // Get the data of a vector whoses offset is stored at "offset" in this object as an
         // ArraySegment&lt;byte&gt;. If the vector is not present in the ByteBuffer,

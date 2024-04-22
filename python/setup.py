@@ -14,21 +14,34 @@
 
 from setuptools import setup
 
+
+def _update_version_attr(new_version):
+    for line in fileinput.input('octoflatbuffers/_version.py', inplace=True):
+        if line.startswith('__version__'):
+            line = re.sub(r'".*"', '"{}"'.format(new_version), line)
+        sys.stdout.write(line)
+
+
+def version():
+    # We will manually set the version to track the flatbuffer version for the most part.
+    # The exception being for revision bumps we make ourselves.
+    version = "2.0.2"
+    _update_version_attr(version)
+    return version
+
+
 setup(
-    name='flatbuffers',
-    version='24.3.25',
+    name='octoflatbuffers',
+    version=version(),
     license='Apache 2.0',
-    license_files='../LICENSE',
-    author='Derek Bailey',
-    author_email='derekbailey@google.com',
-    url='https://google.github.io/flatbuffers/',
-    long_description=('Python runtime library for use with the '
-                      '`Flatbuffers <https://google.github.io/flatbuffers/>`_ '
-                      'serialization format.'),
-    packages=['flatbuffers'],
+    author='Quinn Damerell',
+    author_email='support@octoeverywhere.com',
+    url='https://github.com/QuinnDamerell/octoflatbuffers',
+    long_description=('A special fork of flatbuffers used for OctoEverywhere!'),
+    packages=['octoflatbuffers'],
     include_package_data=True,
     requires=[],
-    description='The FlatBuffers serialization format for Python',
+    description='A special fork of flatbuffers used for OctoEverywhere!',
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
@@ -39,7 +52,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     project_urls={
-        'Documentation': 'https://google.github.io/flatbuffers/',
-        'Source': 'https://github.com/google/flatbuffers',
+        'Documentation': 'https://github.com/QuinnDamerell/octoflatbuffers',
+        'Source': 'https://github.com/QuinnDamerell/octoflatbuffers',
     },
 )
