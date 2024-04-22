@@ -25,7 +25,7 @@ def _update_version_attr(new_version):
 def version():
     # We will manually set the version to track the flatbuffer version for the most part.
     # The exception being for revision bumps we make ourselves.
-    version = "2.0.5"
+    version = "24.3.25"
     _update_version_attr(version)
     return version
 
@@ -37,11 +37,18 @@ setup(
     author='Quinn Damerell',
     author_email='support@octoeverywhere.com',
     url='https://github.com/QuinnDamerell/octoflatbuffers',
-    long_description=('A special fork of flatbuffers used for OctoEverywhere!'),
+    long_description="""
+# OctoFlatBuffers
+A fork of [flatbuffers](https://flatbuffers.dev/) with some special modifications. Used as the core protocol for:
+- [OctoEverywhere](https://octoeverywhere.com/?source=pypi) - Free, private, and secure remote access for OctoPrint and Klipper 3D printer.
+- [Homeway](https://homeway.io/?source=pypi) - Free, private, and secure remote access for Home Assistant.
+\n\nFor details on why the fork was needed, see the [source GitHub repository.](https://github.com/QuinnDamerell/octoflatbuffers)
+""",
+    long_description_content_type='text/markdown',
     packages=['octoflatbuffers'],
     include_package_data=True,
     requires=[],
-    description='A special fork of flatbuffers used for OctoEverywhere!',
+    description='A fork of flatbuffers used for OctoEverywhere and Homeway',
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
@@ -54,5 +61,7 @@ setup(
     project_urls={
         'Documentation': 'https://github.com/QuinnDamerell/octoflatbuffers',
         'Source': 'https://github.com/QuinnDamerell/octoflatbuffers',
+        'OctoEverywhere': 'https://octoeverywhere.com/?source=pypi',
+        'Homeway': 'https://homeway.io/?source=pypi',
     },
 )
