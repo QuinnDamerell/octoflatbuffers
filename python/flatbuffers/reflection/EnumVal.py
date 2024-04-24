@@ -3,8 +3,9 @@
 # namespace: reflection
 
 import flatbuffers
-from flatbuffers.compat import import_numpy
-np = import_numpy()
+# from flatbuffers.compat import import_numpy
+# np = import_numpy()
+np = None
 
 class EnumVal(object):
     __slots__ = ['_tab']

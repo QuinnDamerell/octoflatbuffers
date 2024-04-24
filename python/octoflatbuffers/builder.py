@@ -27,7 +27,6 @@ np = None
 
 import warnings
 
-np = import_numpy()
 ## @file
 ## @addtogroup flatbuffers_python_api
 ## @{

@@ -24,7 +24,9 @@ Building pip packages:
         - https://realpython.com/pypi-publish-python-package/#preparing-your-package-for-publication
     - `python -m pip install build twine`
     - `cd <repo root>\python`
+    - Update the version string in <rr>\python\setup.py
     - Update any refs to the old version (search the old version in all files and update)
+        - Note that _version.py will be updated automatically by the build command.
     - Ensure the `.\dist` folder contains nothing.
     - `python -m build`
     - Copy the output .whl file to .zip and you can look at what was packaged.
