@@ -471,8 +471,9 @@ class Builder(object):
         self.nested = True
         ## @endcond
 
-        if not isinstance(x, compat.binary_types):
-            raise TypeError("non-byte vector passed to CreateByteVector")
+        #  QUINN CHANGE - We disabled this so we can use memoryviews as well as bytes and bytearrays
+        # if not isinstance(x, compat.binary_types):
+        #     raise TypeError("non-byte vector passed to CreateByteVector")
 
         self.Prep(N.UOffsetTFlags.bytewidth, len(x)*N.Uint8Flags.bytewidth)
 

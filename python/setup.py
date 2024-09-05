@@ -39,7 +39,7 @@ __version__ = u"{new_version}"''')
 def version():
     # We will manually set the version to track the flatbuffer version for the most part.
     # The exception being for revision bumps we make ourselves.
-    version = "24.3.26"
+    version = "24.3.27"
     _update_version_attr(version)
     return version
 
